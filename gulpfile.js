@@ -1,20 +1,30 @@
-const {parallel, series, src, dest, watch } = require('gulp');
+const {src, dest, watch,series } = require('gulp');
 const sass  = require('gulp-sass');
+const concat  = require('gulp-concat');
 
 function build(){
-    
+    return src(['./src/*.html','./src/assets/**/*.js','./src/assets/**/*.css','!./src/assets/scripts/*.js','!./src/assets/styles/*.scss'])
+    .pipe(dest('./dist'))
 }
 function dev(){
-    console.log('Watching files...')
-    watch('src/assets/styles/*.scss',style);
+    // converting sass file
+    watch('./src/assets/scripts/',series(scripts))
+    watch('./src/assets/styles/',series(styles))
 }
-function style(){
+function styles(){
     // converting sass file
     return src('src/assets/styles/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(dest('src/assets/css'))
 }
+function scripts(){
+    // converting sass file
+    return src('src/assets/scripts/*.js')
+    .pipe(concat('main.js'))
+    .pipe(dest('src/assets/js'))
+}
 
-exports.style = style;
-exports.build = build;
 exports.dev = dev;
+exports.scripts = scripts;
+exports.styles = styles;
+exports.build = build;
